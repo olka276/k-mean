@@ -45,12 +45,11 @@ def get_closest_avg(point, avgs):
         distances[i] = m.euclidean(point, avgs[i])
 
     return get_index_of_the_smallest_value(distances)
-    # return avgs[index]
 
 
 def get_index_of_the_smallest_value(dict):
     sorted_dict = {}
-    sorted_keys = sorted(dict, key=dict.get)  # [1, 3, 2]
+    sorted_keys = sorted(dict, key=dict.get)
 
     for w in sorted_keys:
         sorted_dict[w] = dict[w]
