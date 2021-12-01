@@ -1,45 +1,38 @@
-import time
-
 import matplotlib.pyplot as plt
 import utils as ut
 
-colors = {
-    0: "yellow",
-    1: "violet",
-    2: "red",
-    3: "green",
-    4: "blue",
-    5: "pink",
-    6: "orange"
-}
+cmap = plt.get_cmap("tab10").colors
 
 print('Type amount of groups')
 groups = int(input())
 
-print(groups)
+print('Type amount of iterations')
+iterations = int(input())
 
 data = ut.txt_num_read("spiralka.txt")
-x_y_array = ut.transform_to_x_y_arrays(data)
-
 avgs = data[0:groups]
-x_y_avgs = ut.transform_to_x_y_arrays(avgs)
 
-clusters = {}
+for i in range(iterations):
+    # if first loop - get random elements as cluster avg
+    if i == 0:
+        avgs = ut.get_random_avgs(groups, data)
 
-for i in range(10):
-    for i in range(len(avgs)):
-        plt.plot(avgs[i][0], avgs[i][1], "*", color=colors[i])
+    # dictionary having group index => points
+    grouped_point = {}
 
+    # get avg point closest to point
     for point in data:
-        closestAvgIndex = (ut.get_closest_avg(point, avgs))
-        print(closestAvgIndex)
-        clusters.setdefault(closestAvgIndex, []).append(point)
+        closestAvgIndex = ut.get_closest_avg(point, avgs)
+        if closestAvgIndex in grouped_point.keys():
+            grouped_point[closestAvgIndex].append(point)
+        else:
+            grouped_point[closestAvgIndex] = [point]
 
-    for index in clusters:
-        x_y_pts = ut.transform_to_x_y_arrays(clusters[index])
-        plt.plot(x_y_pts[0], x_y_pts[1], "o", color=colors[index])
-    avgs = ut.get_avgs_of_clusters(clusters)
+    # draw a graph
+    for j in grouped_point.keys():
+        xyArr = ut.transform_to_x_y_arrays(grouped_point[j])
+        plt.plot(xyArr[0], xyArr[1], "o", color=cmap[j])
+        plt.plot(avgs[j][0], avgs[j][1], "*", color=cmap[j])
+
+    avgs = ut.get_avgs_of_clusters(grouped_point)
     plt.show()
-    time.sleep(1)
-    plt.clf()
-
